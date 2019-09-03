@@ -47,7 +47,7 @@ class CategoriesController < ApplicationController
   end
 
   def create
-    @category = KbCategory.new(params[:category])
+    @category = KbCategory.new(category_params)
     @category.project_id=@project.id
     if @category.save
       # Test if the new category is a root category, and if more categories exist.
@@ -97,7 +97,7 @@ class CategoriesController < ApplicationController
       @category.move_to_child_of(KbCategory.find(params[:parent_id]))
     end
 
-    if @category.update_attributes(params[:category])
+    if @category.update_attributes(category_params)
       flash[:notice] = l(:label_category_updated)
       redirect_to({ :action => 'show', :id => @category.id, :project_id => @project })
     else
@@ -108,6 +108,9 @@ class CategoriesController < ApplicationController
 #######
 private
 #######
+  def category_params
+    params.require(:category).permit(:title, :description)
+  end
 
   def get_category
     if params[:id] != nil
