@@ -6,7 +6,7 @@ Rails.configuration.to_prepare do
   Redmine::Search.available_search_types << 'kb_articles'
 end
 
-ActionDispatch::Reloader.to_prepare do
+ActiveSupport::Reloader.to_prepare do
   require 'macros'
   require 'concerns/knowledgebase_project_extension'
   Project.send :include, KnowledgebaseProjectExtension
