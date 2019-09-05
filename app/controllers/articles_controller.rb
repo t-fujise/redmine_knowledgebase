@@ -86,7 +86,7 @@ class ArticlesController < ApplicationController
   end
 
   def create
-    @article = KbArticle.new(params[:article])
+    @article = KbArticle.new(article_params)
     @article.category_id = params[:category_id]
     @article.author_id = User.current.id
     @article.project_id = KbCategory.find(params[:category_id]).project_id
@@ -146,7 +146,7 @@ class ArticlesController < ApplicationController
     # don't keep previous comment
     @article.version_comments = nil
     @article.version_comments = params[:article][:version_comments]
-    if @article.update_attributes(params[:article])
+    if @article.update_attributes(article_params)
       attachments = attach(@article, params[:attachments])
       flash[:notice] = l(:label_article_updated)
       redirect_to({ :action => 'show', :id => @article.id, :project_id => @project })
@@ -249,6 +249,16 @@ class ArticlesController < ApplicationController
 #######
 private
 #######
+
+  def article_params
+    params.require(:article).permit(
+      :title,
+      :summary,
+      :content,
+      :tag_list,
+      :version_comments,
+    )
+  end
 
   # Abstract attachment method to resolve how files should be attached to a model.
   # In newer versions of Redmine, the attach_files functionality was moved
